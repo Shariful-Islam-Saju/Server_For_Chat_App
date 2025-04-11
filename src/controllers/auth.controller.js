@@ -22,8 +22,15 @@ export async function login(req, res) {
     if (!isCorrectPassword) {
       return res.status(402).json({ message: "Password didn't match." });
     }
-
-    return res.status(202).json({ message: "Login successfully." });
+    generateToken(existingUser._id, res);
+    return res
+      .status(200)
+      .json({
+        id: existingUser._id,
+        email: existingUser.email,
+        fullName: existingUser.fullName,
+        profilePic: existingUser.profilePic,
+      });
   } catch (error) {
     return res.status(500).json({ message: "Server Problem" });
   }
@@ -52,7 +59,7 @@ export async function register(req, res) {
       profilePic,
     });
 
-    generateToken({ id: newUser._id }, res);
+    generateToken(newUser._id, res);
 
     await newUser.save();
     return res.status(201).json({ message: "Account created successfully." });
@@ -61,4 +68,12 @@ export async function register(req, res) {
     return res.status(500).json({ message: "Server Problem" });
   }
 }
-export async function logout(req, res) {}
+export async function logout(req, res) {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+  });
+
+  res.status(200).json({message: "Logout Successfully."})
+}
