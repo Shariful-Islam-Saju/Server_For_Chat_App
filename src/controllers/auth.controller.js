@@ -23,14 +23,12 @@ export async function login(req, res) {
       return res.status(402).json({ message: "Password didn't match." });
     }
     generateToken(existingUser._id, res);
-    return res
-      .status(200)
-      .json({
-        id: existingUser._id,
-        email: existingUser.email,
-        fullName: existingUser.fullName,
-        profilePic: existingUser.profilePic,
-      });
+    return res.status(200).json({
+      id: existingUser._id,
+      email: existingUser.email,
+      fullName: existingUser.fullName,
+      profilePic: existingUser.profilePic,
+    });
   } catch (error) {
     return res.status(500).json({ message: "Server Problem" });
   }
@@ -59,7 +57,7 @@ export async function register(req, res) {
       profilePic,
     });
 
-    generateToken(newUser._id, res);
+    newUser._id, res;
 
     await newUser.save();
     return res.status(201).json({ message: "Account created successfully." });
@@ -75,5 +73,9 @@ export async function logout(req, res) {
     secure: true,
   });
 
-  res.status(200).json({message: "Logout Successfully."})
+  res.status(200).json({ message: "Logout Successfully." });
+}
+
+export async function updateProfile(req, res) {
+  res.status(200).json({ message: "Updated route" });
 }
