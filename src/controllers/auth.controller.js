@@ -77,5 +77,8 @@ export async function logout(req, res) {
 }
 
 export async function updateProfile(req, res) {
+  const { profilePic } = req.body;
+  console.log(profilePic)
+  console.log(req.user);
   res.status(200).json({ message: "Updated route" });
 }
