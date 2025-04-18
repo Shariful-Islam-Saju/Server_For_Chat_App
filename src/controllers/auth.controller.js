@@ -2,7 +2,8 @@ import { connectDB } from "../lib/db.js";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import { generateToken } from "../lib/utils.js";
-
+import cloudinary from "../lib/cloudinary.js";
+import path from "path";
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
@@ -62,7 +63,7 @@ export async function register(req, res) {
     await newUser.save();
     return res.status(201).json({ message: "Account created successfully." });
   } catch (error) {
-    console.log(error);
+    console.log("Error in register auth controller", error);
     return res.status(500).json({ message: "Server Problem" });
   }
 }
@@ -77,8 +78,24 @@ export async function logout(req, res) {
 }
 
 export async function updateProfile(req, res) {
-  const { profilePic } = req.body;
-  console.log(profilePic)
-  console.log(req.user);
-  res.status(200).json({ message: "Updated route" });
+  try {
+    const { profilePic } = req.body;
+    if (!profilePic)
+      return res.status(400).json({ message: "Profile Pic is required!" });
+
+    const uploadProfilePic = await cloudinary.uploader.upload();
+    console.log(uploadProfilePic);
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        profilePic: uploadProfilePic.secure_url,
+      },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("Error in UpdateProfile", error);
+    return res.status(500).json({ message: "Server Problem" });
+  }
 }
