@@ -1,17 +1,17 @@
 import { connectDB } from "../lib/db.js";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
-import { generateToken } from "../lib/utils.js";
+import { findUserByEmail, generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";
-import path from "path";
+
+//login route
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(500).json({ message: "All fields are required." });
     }
-    await connectDB();
-    const existingUser = await User.findOne({ email });
+    const existingUser = await findUserByEmail(email);
     if (!existingUser) {
       return res.status(404).json({ message: "Email Not found" });
     }
@@ -27,7 +27,7 @@ export async function login(req, res) {
     return res.status(200).json({
       id: existingUser._id,
       email: existingUser.email,
-      fullName: existingUser.fullName,
+      username: existingUser.username,
       profilePic: existingUser.profilePic,
     });
   } catch (error) {
@@ -35,18 +35,21 @@ export async function login(req, res) {
   }
 }
 
+// register
 export async function register(req, res) {
   try {
-    const { fullName, email, password, profilePic } = req.body;
-    if (!fullName || !email || !password) {
+    const { username, email, password, profilePic } = req.body;
+    if (!username || !email || !password) {
       return res.status(500).json({ message: "All fields are required." });
     }
     if (password.length < 6)
       return res
         .status(400)
         .json({ message: "Password must be 6 charecters." });
-    await connectDB();
-    const existingUser = await User.findOne({ email });
+    if (profilePic) {
+      // TODO: profile pic updated
+    }
+    const existingUser = await findUserByEmail(email)
     if (existingUser) {
       return res.status(500).json({ message: "Email already exits." });
     }
@@ -54,7 +57,7 @@ export async function register(req, res) {
     const newUser = new User({
       email,
       password: hashpassword,
-      fullName,
+      username,
       profilePic,
     });
 
@@ -67,6 +70,8 @@ export async function register(req, res) {
     return res.status(500).json({ message: "Server Problem" });
   }
 }
+
+// logout
 export async function logout(req, res) {
   res.clearCookie("jwt", {
     httpOnly: true,
@@ -75,26 +80,4 @@ export async function logout(req, res) {
   });
 
   res.status(200).json({ message: "Logout Successfully." });
-}
-
-export async function updateProfile(req, res) {
-  try {
-    const { profilePic } = req.body;
-    if (!profilePic)
-      return res.status(400).json({ message: "Profile Pic is required!" });
-
-    const uploadProfilePic = await cloudinary.uploader.upload();
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        profilePic: uploadProfilePic.secure_url,
-      },
-      { new: true }
-    );
-
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    console.log("Error in UpdateProfile", error);
-    return res.status(500).json({ message: "Server Problem" });
-  }
 }
