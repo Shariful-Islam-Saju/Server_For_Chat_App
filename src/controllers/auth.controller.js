@@ -1,8 +1,7 @@
-import { connectDB } from "../lib/db.js";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import { findUserByEmail, generateToken } from "../lib/utils.js";
-import cloudinary from "../lib/cloudinary.js";
+import { uploadToCloudinary } from "../lib/cloudinary.js";
 
 //login route
 export async function login(req, res) {
@@ -38,7 +37,7 @@ export async function login(req, res) {
 // register
 export async function register(req, res) {
   try {
-    const { username, email, password, profilePic } = req.body;
+    const { name: username, email, password } = req.body;
     if (!username || !email || !password) {
       return res.status(500).json({ message: "All fields are required." });
     }
@@ -46,12 +45,15 @@ export async function register(req, res) {
       return res
         .status(400)
         .json({ message: "Password must be 6 charecters." });
-    if (profilePic) {
-      // TODO: profile pic updated
-    }
-    const existingUser = await findUserByEmail(email)
+
+    const existingUser = await findUserByEmail(email);
+
     if (existingUser) {
       return res.status(500).json({ message: "Email already exits." });
+    }
+    if (req.file) {
+      const uploadPic = await uploadToCloudinary(req.file);
+      
     }
     const hashpassword = await bcrypt.hash(password, 10);
     const newUser = new User({
@@ -60,9 +62,6 @@ export async function register(req, res) {
       username,
       profilePic,
     });
-
-    newUser._id, res;
-
     await newUser.save();
     return res.status(201).json({ message: "Account created successfully." });
   } catch (error) {
