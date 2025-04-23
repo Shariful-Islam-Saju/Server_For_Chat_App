@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import { findUserByEmail, generateToken } from "../lib/utils.js";
-import { uploadToCloudinary } from "../lib/cloudinary.js";
 
 //login route
 export async function login(req, res) {
@@ -51,16 +50,12 @@ export async function register(req, res) {
     if (existingUser) {
       return res.status(500).json({ message: "Email already exits." });
     }
-    if (req.file) {
-      const uploadPic = await uploadToCloudinary(req.file);
-      
-    }
     const hashpassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
       password: hashpassword,
       username,
-      profilePic,
+      profilePic: req.file.path,
     });
     await newUser.save();
     return res.status(201).json({ message: "Account created successfully." });
