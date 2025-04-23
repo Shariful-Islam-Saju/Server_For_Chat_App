@@ -50,10 +50,10 @@ export async function register(req, res) {
     if (existingUser) {
       return res.status(500).json({ message: "Email already exits." });
     }
-    const hashpassword = await bcrypt.hash(password, 10);
+    const hashPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
-      password: hashpassword,
+      password: hashPassword,
       username,
       profilePic: req.file.path,
     });
