@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { config } from "dotenv";
 import authRouter from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
@@ -8,7 +9,7 @@ const app = express();
 config();
 
 const PORT = process.env.SERVER_PORT;
-
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

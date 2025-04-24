@@ -4,6 +4,8 @@ import { findUserByEmail, generateToken } from "../lib/utils.js";
 
 //login route
 export async function login(req, res) {
+  const token = req.cookies;
+  console.log("this is jwt token", token);
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -51,11 +53,12 @@ export async function register(req, res) {
       return res.status(500).json({ message: "Email already exits." });
     }
     const hashPassword = await bcrypt.hash(password, 10);
+    const profilePic = req.file ? req.file.path : "";
     const newUser = new User({
       email,
       password: hashPassword,
       username,
-      profilePic: req.file.path,
+      profilePic,
     });
     await newUser.save();
     return res.status(201).json({ message: "Account created successfully." });

@@ -10,6 +10,11 @@ const upload = multer({
     }
     cb(null, true);
   },
+  public_id: (req, file) => {
+    const timestamp = Date.now();
+    const originalName = file.originalname.split(".").slice(0, -1).join(".");
+    return `${originalName}-${timestamp}`;
+  },  
 });
 
 export default upload;
