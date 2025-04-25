@@ -61,6 +61,7 @@ export async function register(req, res) {
       profilePic,
     });
     await newUser.save();
+
     return res.status(201).json({ message: "Account created successfully." });
   } catch (error) {
     console.log("Error in register auth controller", error);
