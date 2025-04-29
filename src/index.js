@@ -11,7 +11,8 @@ config();
 const PORT = process.env.SERVER_PORT;
 app.use(
   cors({
-    origin: "http://localhost:4000", // your intended blocked port
+    origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 
@@ -21,7 +22,6 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/conversation", protectedRoute, conversationRouter);
-
 app.listen(PORT, async () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

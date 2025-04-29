@@ -23,12 +23,15 @@ export async function login(req, res) {
     if (!isCorrectPassword) {
       return res.status(402).json({ message: "Password didn't match." });
     }
-    generateToken(existingUser._id, res);
+    const token = generateToken(existingUser._id, res);
     return res.status(200).json({
-      id: existingUser._id,
-      email: existingUser.email,
-      username: existingUser.username,
-      profilePic: existingUser.profilePic,
+      token,
+      user: {
+        id: existingUser._id,
+        email: existingUser.email,
+        username: existingUser.username,
+        profilePic: existingUser.profilePic,
+      },
     });
   } catch (error) {
     return res.status(500).json({ message: "Server Problem" });
@@ -61,8 +64,16 @@ export async function register(req, res) {
       profilePic,
     });
     await newUser.save();
-
-    return res.status(201).json({ message: "Account created successfully." });
+    const token = generateToken(newUser._id, res);
+    return res.status(201).json({
+      token,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        profilePic: newUser.profilePic,
+      },
+    });
   } catch (error) {
     console.log("Error in register auth controller", error);
     return res.status(500).json({ message: "Server Problem" });
