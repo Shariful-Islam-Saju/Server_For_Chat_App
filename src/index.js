@@ -20,8 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.get('/', (req, res) => {
+  
+  res.status(200).json({message:"This is me Shariful Islam."})
+})
+
 app.use("/api/auth", authRouter);
 app.use("/api/conversation", protectedRoute, conversationRouter);
 app.listen(PORT, async () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running `);
 });
