@@ -11,7 +11,7 @@ config();
 const PORT = process.env.SERVER_PORT;
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTED_URI,
     credentials: true,
   })
 );
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get('/', (req, res) => {
-  
+
   res.status(200).json({message:"This is me Shariful Islam."})
 })
 
