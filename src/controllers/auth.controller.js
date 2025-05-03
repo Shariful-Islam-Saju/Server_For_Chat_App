@@ -4,8 +4,6 @@ import { findUserByEmail, generateToken } from "../lib/utils.js";
 
 //login route
 export async function login(req, res) {
-  const token = req.cookies;
-  console.log("this is jwt token", token);
   try {
     const { email, password } = req.body;
     if (!email || !password) {
