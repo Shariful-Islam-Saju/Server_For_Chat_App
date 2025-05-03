@@ -9,7 +9,7 @@ const app = express();
 config();
 
 const PORT = process.env.SERVER_PORT;
-const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:3000/"];
+const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:3000"];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
