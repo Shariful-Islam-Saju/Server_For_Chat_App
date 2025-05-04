@@ -6,7 +6,7 @@ export const generateToken = (userId, res) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
-  res.cookie("jwt", token, {
+  res.cookie("jwt_auth_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // false in dev
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
