@@ -3,8 +3,9 @@ import cors from "cors";
 import { config } from "dotenv";
 import authRouter from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
-import conversationRouter from "./routes/conversaion.route.js";
+import conversationRouter from "./routes/conversation.route.js";
 import { protectedRoute } from "./middleware/protectedRoute.js";
+import { connectDB } from "./lib/db.js";
 const app = express();
 config();
 
@@ -21,8 +22,7 @@ app.use(
 );
 
 app.use(cookieParser());
-
-
+connectDB();
 
 app.use("/api/auth", authRouter);
 app.use("/api/conversation", protectedRoute, conversationRouter);

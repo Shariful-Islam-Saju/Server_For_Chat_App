@@ -4,7 +4,6 @@ import { findUserByEmail, generateToken } from "../lib/utils.js";
 
 //login route
 export async function login(req, res) {
-  console.log(req.cookies);
   try {
     const { email, password } = req.body;
     if (!email || !password) {
