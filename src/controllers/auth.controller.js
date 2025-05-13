@@ -76,6 +76,10 @@ export async function register(req, res) {
   }
 }
 
+export async function checkAuth(req, res) {
+  res.status(200).json({ user: req.user });
+}
+
 // logout
 export async function logout(req, res) {
   res.clearCookie("jwt", {
