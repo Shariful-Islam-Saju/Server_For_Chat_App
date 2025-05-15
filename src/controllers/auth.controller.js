@@ -77,12 +77,20 @@ export async function register(req, res) {
 }
 
 export async function checkAuth(req, res) {
-  res.status(200).json({ user: req.user });
+  const user = req.user;
+  res.status(200).json({
+    user: {
+      id: user._id,
+      email: user.email,
+      username: user.username,
+      profilePic: user.profilePic,
+    },
+  });
 }
 
 // logout
 export async function logout(req, res) {
-  res.clearCookie("jwt", {
+  res.clearCookie("jwt_auth_token", {
     httpOnly: true,
     sameSite: "strict",
     secure: true,

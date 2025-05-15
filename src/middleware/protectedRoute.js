@@ -7,7 +7,7 @@ export async function protectedRoute(req, res, next) {
     if (!token) return res.status(404).json({ message: "Token not found!" });
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const isExistingUser = await User.findById(decoded.id).select(
-      "-password -lastActive -createdAt -updatedAt "
+      "-password "
     );
     if (!isExistingUser)
       return res.status(404).json({ message: "Account not found!" });
