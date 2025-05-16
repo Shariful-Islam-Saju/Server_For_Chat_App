@@ -4,11 +4,10 @@ import User from "../models/user.model.js";
 export async function protectedRoute(req, res, next) {
   try {
     const token = req.cookies.jwt_auth_token;
+    console.log("This is jwt auth token", token);
     if (!token) return res.status(404).json({ message: "Token not found!" });
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const isExistingUser = await User.findById(decoded.id).select(
-      "-password "
-    );
+    const isExistingUser = await User.findById(decoded.id).select("-password ");
     if (!isExistingUser)
       return res.status(404).json({ message: "Account not found!" });
     req.user = isExistingUser;
