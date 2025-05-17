@@ -5,6 +5,8 @@ import { findUserByEmail, generateToken } from "../lib/utils.js";
 //login route
 export async function login(req, res) {
   try {
+    const token = req.cookies.jwt_auth_token;
+    console.log("This is jwt auth token", token);
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(500).json({ message: "All fields are required." });
